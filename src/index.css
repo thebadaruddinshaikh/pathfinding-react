@@ -1,0 +1,68 @@
+.box {
+	height: 30px;
+	width: 30px;
+	border: 1px solid gainsboro;
+	background-color: white;
+}
+.box:hover {
+	cursor: pointer;
+}
+.source {
+	margin: 0px;
+	padding: 0px;
+	text-align: center;
+	font-weight: 900;
+	font-size: 23px;
+}
+.visited {
+	animation: touched 0.6s ease-out forwards;
+	animation-iteration-count: 1;
+	transform-origin: center;
+}
+.wall {
+	background-color: rgb(84, 84, 84);
+	animation: wallBounce 0.4s ease-out forwards;
+}
+
+@keyframes wallBounce {
+	50% {
+		transform: scale(1.2);
+		transform-origin: center;
+	}
+	100% {
+		border-color: rgb(89, 89, 89);
+	}
+}
+@keyframes touched {
+	0% {
+		transform: scale(0.3);
+		background-color: yellow;
+		border-color: yellow;
+		border-radius: 100%;
+	}
+	50% {
+		transform: scale(1.1);
+		border-radius: 0px;
+		background-color: rgb(0, 119, 255);
+		border-color: rgb(0, 119, 255);
+	}
+	100% {
+		background-color: cyan;
+		border-color: rgb(10, 207, 207);
+	}
+}
+
+/* gird  */
+.grid-container {
+	margin-top: 30px;
+}
+.center-container {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+.center-row-container {
+	display: flex;
+	justify-content: center;
+}
