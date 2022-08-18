@@ -1,7 +1,9 @@
+import { GRID } from "./constants";
+
 export default class Algorithms {
 	async breadthFirstSearch(queue, speed, end) {
 		//building the PrevNodeList
-		// let prevNodeList = this.prevNodeArray;
+		const prevNodeList = this.constructor.buildGrid();
 
 		this.markVisited(queue[0][0], queue[0][1]);
 
@@ -16,7 +18,7 @@ export default class Algorithms {
 				let x = box[0] + dx[i];
 				let y = box[1] + dy[i];
 				//check if off the grid
-				if (x < 0 || y < 0 || x > 39 || y > 19) {
+				if (x < 0 || y < 0 || x >= GRID.NUM_COLS || y >= GRID.NUM_ROWS) {
 					continue;
 				}
 				//check if wall
@@ -25,13 +27,22 @@ export default class Algorithms {
 				}
 				//else put in queue
 				if (!this.state.grid[y][x].isVisited) {
-					// prevNodeList[y][x] = [...box];
+					prevNodeList[y][x] = box.slice();
 					queue.push([x, y]);
 					this.markVisited(x, y);
-					await new Promise((r) => setTimeout(r, speed));
+
+					if (speed !== 0) {
+						await new Promise((r) => setTimeout(r, speed));
+					}
 				}
+
 				if (x === end[0] && y === end[1]) {
-					// await this.buildPath(prevNodeList, this.stateManager.destination);
+					const pathArray = [];
+					while (x !== -1 && y !== -1) {
+						pathArray.push([x, y]);
+						[x, y] = prevNodeList[y][x];
+					}
+					this.drawPath(pathArray, speed);
 					return;
 				}
 			}

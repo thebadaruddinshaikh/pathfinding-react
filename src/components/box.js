@@ -6,7 +6,8 @@ class Box extends React.Component {
 			this.props.isWall !== nextProps.isWall ||
 			this.props.isVisited !== nextProps.isVisited ||
 			this.props.isStart !== nextProps.isStart ||
-			this.props.isEnd !== nextProps.isEnd
+			this.props.isEnd !== nextProps.isEnd ||
+			this.props.isPath !== nextProps.isPath
 		);
 	}
 
@@ -14,8 +15,10 @@ class Box extends React.Component {
 		let classList = "box";
 		if (this.props.isWall) {
 			classList += " wall ";
+		} else if (this.props.isPath) {
+			classList += this.props.isPathFound ? " path " : " animate-path ";
 		} else if (this.props.isVisited) {
-			classList += " visited ";
+			classList += this.props.isPathFound ? " visit " : " animate-visit ";
 		}
 
 		return classList.trim();

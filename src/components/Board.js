@@ -1,17 +1,18 @@
 import React from "react";
 import Box from "./box";
+import { GRID } from "../constants";
 import Algorithms from "../algorithms";
 
 export default class Board extends React.PureComponent {
 	constructor(props) {
 		super(props);
 		this.algorithms = new Algorithms();
-
 		this.state = {
 			grid: this.constructor.buildGrid(),
 			isDragging: false,
 			isHouseMoving: false,
 			isStartMoving: false,
+			isPathFound: false,
 			start: [5, 10],
 			end: [35, 10],
 		};
@@ -19,9 +20,9 @@ export default class Board extends React.PureComponent {
 
 	static buildGrid() {
 		let grid = [];
-		for (let y = 0; y < 20; y++) {
+		for (let y = 0; y < GRID.NUM_ROWS; y++) {
 			let tempArr = [];
-			for (let x = 0; x < 40; x++) {
+			for (let x = 0; x < GRID.NUM_COLS; x++) {
 				tempArr.push([-1, -1]);
 			}
 			grid[y] = tempArr;
@@ -50,20 +51,28 @@ export default class Board extends React.PureComponent {
 	};
 
 	moveHouseto = (coord) => {
+		let start = this.state.start;
+		let end = this.state.end;
 		if (
 			this.state.isStartMoving &&
 			(coord[0] !== this.state.end[0] || coord[1] !== this.state.end[1])
 		) {
-			this.setState({
-				start: coord.slice(),
-			});
+			start = coord.slice();
 		} else if (
 			coord[0] !== this.state.start[0] ||
 			coord[1] !== this.state.start[1]
 		) {
-			this.setState({
-				end: coord.slice(),
-			});
+			end = coord.slice();
+		}
+
+		this.setState({
+			start,
+			end,
+		});
+
+		if (this.state.isPathFound) {
+			this.clearPath();
+			this.findPath({ start, end, speed: 0 });
 		}
 	};
 
@@ -84,6 +93,26 @@ export default class Board extends React.PureComponent {
 		});
 	};
 
+	clearPath = () => {
+		let grid = this.state.grid.slice();
+
+		for (let y = 0; y < GRID.NUM_ROWS; y++) {
+			for (let x = 0; x < GRID.NUM_COLS; x++) {
+				if (grid[y][x].isVisited || grid[y][x].isPath) {
+					grid[y][x] = {
+						// ...box,
+						isVisited: false,
+						isPath: false,
+					};
+				}
+			}
+		}
+
+		this.setState({
+			grid,
+		});
+	};
+
 	markVisited = (x, y) => {
 		let grid = [...this.state.grid];
 		grid[y][x] = {
@@ -91,6 +120,37 @@ export default class Board extends React.PureComponent {
 		};
 		this.setState({
 			grid: grid,
+		});
+	};
+
+	findPath = ({
+		start = this.state.start,
+		end = this.state.end,
+		speed = 100,
+	}) => {
+		const bfs = this.algorithms.breadthFirstSearch.bind(this);
+		const queue = [start];
+		bfs(queue, speed, end);
+	};
+
+	drawPath = async (pathArr, speed) => {
+		for (let i = pathArr.length - 1; i >= 0; i--) {
+			let [x, y] = pathArr[i];
+			let grid = this.state.grid.slice();
+			grid[y][x] = {
+				...grid[y][x],
+				isPath: true,
+			};
+			this.setState({
+				grid: grid,
+			});
+
+			if (speed !== 0) {
+				await new Promise((r) => setTimeout(r, speed));
+			}
+		}
+		this.setState({
+			isPathFound: true,
 		});
 	};
 
@@ -110,6 +170,8 @@ export default class Board extends React.PureComponent {
 									<Box
 										isWall={box.isWall}
 										isVisited={box.isVisited}
+										isPath={box.isPath}
+										isPathFound={this.state.isPathFound}
 										isStart={
 											this.state.start[0] === index && this.state.start[1] === rowNum
 										}
@@ -127,17 +189,8 @@ export default class Board extends React.PureComponent {
 						</div>
 					);
 				})}
-				<button onClick={() => this.makeWall(5, 1)}>Check!</button>
-				<button
-					onClick={() => {
-						const bfs = this.algorithms.breadthFirstSearch.bind(this);
-						const queue = [this.state.start.slice()];
-						const end = this.state.end.slice();
-						bfs(queue, 100, end);
-					}}
-				>
-					Visited
-				</button>
+				<button onClick={() => this.findPath({ speed: 100 })}>Find Path</button>
+				<button onClick={this.clearPath}>Clear Path</button>
 			</div>
 		);
 	}
