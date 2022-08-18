@@ -13,6 +13,7 @@ export default class Board extends React.PureComponent {
 			isHouseMoving: false,
 			isStartMoving: false,
 			isPathFound: false,
+			isUnderProgramControl: false,
 			start: [5, 10],
 			end: [35, 10],
 		};
@@ -51,46 +52,50 @@ export default class Board extends React.PureComponent {
 	};
 
 	moveHouseto = (coord) => {
-		let start = this.state.start;
-		let end = this.state.end;
-		if (
-			this.state.isStartMoving &&
-			(coord[0] !== this.state.end[0] || coord[1] !== this.state.end[1])
-		) {
-			start = coord.slice();
-		} else if (
-			coord[0] !== this.state.start[0] ||
-			coord[1] !== this.state.start[1]
-		) {
-			end = coord.slice();
-		}
+		if (!this.state.isUnderProgramControl) {
+			let start = this.state.start;
+			let end = this.state.end;
+			if (
+				this.state.isStartMoving &&
+				(coord[0] !== this.state.end[0] || coord[1] !== this.state.end[1])
+			) {
+				start = coord.slice();
+			} else if (
+				coord[0] !== this.state.start[0] ||
+				coord[1] !== this.state.start[1]
+			) {
+				end = coord.slice();
+			}
 
-		this.setState({
-			start,
-			end,
-		});
+			this.setState({
+				start,
+				end,
+			});
 
-		if (this.state.isPathFound) {
-			this.clearPath();
-			this.findPath({ start, end, speed: 0 });
+			if (this.state.isPathFound) {
+				this.clearPath();
+				this.findPath({ start, end, speed: 0 });
+			}
 		}
 	};
 
 	makeWall = (x, y) => {
-		if (
-			(x === this.state.start[0] && y === this.state.start[1]) ||
-			(x === this.state.end[0] && y === this.state.end[1])
-		) {
-			return;
+		if (!this.state.isUnderProgramControl) {
+			if (
+				(x === this.state.start[0] && y === this.state.start[1]) ||
+				(x === this.state.end[0] && y === this.state.end[1])
+			) {
+				return;
+			}
+			let grid = [...this.state.grid];
+			grid[y][x] = {
+				isWall: !this.state.grid[y][x].isWall,
+				isVisited: false,
+			};
+			this.setState({
+				grid: grid,
+			});
 		}
-		let grid = [...this.state.grid];
-		grid[y][x] = {
-			isWall: !this.state.grid[y][x].isWall,
-			isVisited: false,
-		};
-		this.setState({
-			grid: grid,
-		});
 	};
 
 	clearPath = () => {
@@ -123,14 +128,22 @@ export default class Board extends React.PureComponent {
 		});
 	};
 
-	findPath = ({
+	findPath = async ({
 		start = this.state.start,
 		end = this.state.end,
 		speed = 100,
 	}) => {
+		this.setState({
+			isUnderProgramControl: true,
+		});
+
 		const bfs = this.algorithms.breadthFirstSearch.bind(this);
 		const queue = [start];
-		bfs(queue, speed, end);
+		await bfs(queue, speed, end);
+
+		this.setState({
+			isUnderProgramControl: false,
+		});
 	};
 
 	drawPath = async (pathArr, speed) => {
@@ -189,8 +202,22 @@ export default class Board extends React.PureComponent {
 						</div>
 					);
 				})}
-				<button onClick={() => this.findPath({ speed: 100 })}>Find Path</button>
-				<button onClick={this.clearPath}>Clear Path</button>
+				<button
+					onClick={() => this.findPath({ speed: 100 })}
+					disabled={this.state.isUnderProgramControl}
+				>
+					Find Path
+				</button>
+				<button
+					onClick={() => {
+						this.setState({
+							isPathFound: false,
+						});
+						this.clearPath();
+					}}
+				>
+					Clear Path
+				</button>
 			</div>
 		);
 	}
