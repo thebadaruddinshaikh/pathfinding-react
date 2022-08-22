@@ -1,6 +1,6 @@
 # Getting Started with Create React App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app), currently deployed using GH pages at : https://thebadaruddinshaikh.github.io/pathfinding-react/
 
 ## Available Scripts
 
