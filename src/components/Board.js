@@ -296,7 +296,11 @@ export default class Board extends React.PureComponent {
 				</div>
 				<div className="info-block">
 					{" "}
-					<a href={"https://www.google.com"} target={"_blank"} rel="noreferrer">
+					<a
+						href={"https://github.com/thebadaruddinshaikh/pathfinding-react"}
+						target={"_blank"}
+						rel="noreferrer"
+					>
 						Source Code
 					</a>
 				</div>
