@@ -1,12 +1,44 @@
 import React from "react";
-import Box from "./box";
 import { GRID } from "../constants";
 import Algorithms from "../algorithms";
 
+import Box from "./box";
+import NavBar from "./NavBar";
+
 export default class Board extends React.PureComponent {
+	speedToDelayMap = {
+		IN: 0,
+		FS: 25,
+		MD: 75,
+		SL: 100,
+	};
+
+	speedToStringMap = {
+		IN: "Insane ⚡️",
+		FS: "Fast",
+		MD: "Medium",
+		SL: "Slow",
+	};
+
+	algoToMethodMap = null;
+
+	algoToStringMap = {
+		BFS: "BFS",
+		DFS: "DFS",
+		DIK: "Dijkstra's",
+		AST: "A*",
+	};
+
 	constructor(props) {
 		super(props);
 		this.algorithms = new Algorithms();
+		this.algoToMethodMap = {
+			BFS: this.algorithms.breadthFirstSearch.bind(this),
+			DFS: this.algorithms.depthFirstSearch.bind(this),
+			DIK: this.algorithms.dijkstras.bind(this),
+			AST: this.algorithms.aStar.bind(this),
+		};
+
 		this.state = {
 			grid: this.constructor.buildGrid(),
 			isDragging: false,
@@ -14,6 +46,8 @@ export default class Board extends React.PureComponent {
 			isStartMoving: false,
 			isPathFound: false,
 			isUnderProgramControl: false,
+			selectedAlgo: "BFS",
+			selectedSpeed: "Fast",
 			start: [5, 10],
 			end: [35, 10],
 		};
@@ -51,6 +85,18 @@ export default class Board extends React.PureComponent {
 		});
 	};
 
+	changeAlgo = (selectedAlgo) => {
+		this.setState({
+			selectedAlgo,
+		});
+	};
+
+	changeSpeed = (selectedSpeed) => {
+		this.setState({
+			selectedSpeed,
+		});
+	};
+
 	moveHouseto = (coord) => {
 		if (!this.state.isUnderProgramControl) {
 			let start = this.state.start;
@@ -73,7 +119,6 @@ export default class Board extends React.PureComponent {
 			});
 
 			if (this.state.isPathFound) {
-				this.clearPath();
 				this.findPath({ start, end, speed: 0 });
 			}
 		}
@@ -98,24 +143,31 @@ export default class Board extends React.PureComponent {
 		}
 	};
 
-	clearPath = () => {
-		let grid = this.state.grid.slice();
+	clearPath = (rebuildWithAnimation = false) => {
+		if (!this.state.isUnderProgramControl) {
+			if (rebuildWithAnimation) {
+				this.setState({
+					isPathFound: false,
+				});
+			}
+			let grid = this.state.grid.slice();
 
-		for (let y = 0; y < GRID.NUM_ROWS; y++) {
-			for (let x = 0; x < GRID.NUM_COLS; x++) {
-				if (grid[y][x].isVisited || grid[y][x].isPath) {
-					grid[y][x] = {
-						// ...box,
-						isVisited: false,
-						isPath: false,
-					};
+			for (let y = 0; y < GRID.NUM_ROWS; y++) {
+				for (let x = 0; x < GRID.NUM_COLS; x++) {
+					if (grid[y][x].isVisited || grid[y][x].isPath) {
+						grid[y][x] = {
+							// ...box,
+							isVisited: false,
+							isPath: false,
+						};
+					}
 				}
 			}
-		}
 
-		this.setState({
-			grid,
-		});
+			this.setState({
+				grid,
+			});
+		}
 	};
 
 	markVisited = (x, y) => {
@@ -131,19 +183,23 @@ export default class Board extends React.PureComponent {
 	findPath = async ({
 		start = this.state.start,
 		end = this.state.end,
-		speed = 100,
+		speed = this.speedToDelayMap[this.state.selectedSpeed],
+		triggerFromNav = false,
 	}) => {
-		this.setState({
-			isUnderProgramControl: true,
-		});
+		console.log(speed);
+		if (!this.state.isUnderProgramControl) {
+			this.clearPath();
+			this.setState({
+				isUnderProgramControl: true,
+				isPathFound: !triggerFromNav,
+			});
 
-		const bfs = this.algorithms.breadthFirstSearch.bind(this);
-		const queue = [start];
-		await bfs(queue, speed, end);
-
-		this.setState({
-			isUnderProgramControl: false,
-		});
+			const queue = [start];
+			await this.algoToMethodMap[this.state.selectedAlgo](queue, speed, end);
+			this.setState({
+				isUnderProgramControl: false,
+			});
+		}
 	};
 
 	drawPath = async (pathArr, speed) => {
@@ -170,54 +226,49 @@ export default class Board extends React.PureComponent {
 	render() {
 		let rowKey = 5000;
 		return (
-			<div
-				className="center-container grid-container"
-				onMouseDown={this.enableDragging}
-				onMouseUp={this.disableDragging}
-			>
-				{this.state.grid.map((rows, rowNum) => {
-					return (
-						<div className="center-row-container" key={--rowKey}>
-							{rows.map((box, index) => {
-								return (
-									<Box
-										isWall={box.isWall}
-										isVisited={box.isVisited}
-										isPath={box.isPath}
-										isPathFound={this.state.isPathFound}
-										isStart={
-											this.state.start[0] === index && this.state.start[1] === rowNum
-										}
-										isEnd={this.state.end[0] === index && this.state.end[1] === rowNum}
-										key={rowNum * 30 + index}
-										coord={[index, rowNum]}
-										isDragging={this.state.isDragging}
-										isHouseMoving={this.state.isHouseMoving}
-										onClick={this.makeWall}
-										setHouseOnMove={this.setHouseOnMove}
-										moveHouseto={this.moveHouseto}
-									/>
-								);
-							})}
-						</div>
-					);
-				})}
-				<button
-					onClick={() => this.findPath({ speed: 100 })}
-					disabled={this.state.isUnderProgramControl}
+			<div>
+				<NavBar
+					findPath={this.findPath}
+					isUnderProgramControl={this.state.isUnderProgramControl}
+					clearPath={this.clearPath}
+					updateAlgo={this.changeAlgo}
+					updateSpeed={this.changeSpeed}
+					selectedAlgo={this.algoToStringMap[this.state.selectedAlgo]}
+					selectedSpeed={this.speedToStringMap[this.state.selectedSpeed]}
+				/>
+				<div
+					className="center-container grid-container"
+					onMouseDown={this.enableDragging}
+					onMouseUp={this.disableDragging}
 				>
-					Find Path
-				</button>
-				<button
-					onClick={() => {
-						this.setState({
-							isPathFound: false,
-						});
-						this.clearPath();
-					}}
-				>
-					Clear Path
-				</button>
+					{this.state.grid.map((rows, rowNum) => {
+						return (
+							<div className="center-row-container" key={--rowKey}>
+								{rows.map((box, index) => {
+									return (
+										<Box
+											isWall={box.isWall}
+											isVisited={box.isVisited}
+											isPath={box.isPath}
+											isPathFound={this.state.isPathFound}
+											isStart={
+												this.state.start[0] === index && this.state.start[1] === rowNum
+											}
+											isEnd={this.state.end[0] === index && this.state.end[1] === rowNum}
+											key={rowNum * 30 + index}
+											coord={[index, rowNum]}
+											isDragging={this.state.isDragging}
+											isHouseMoving={this.state.isHouseMoving}
+											onClick={this.makeWall}
+											setHouseOnMove={this.setHouseOnMove}
+											moveHouseto={this.moveHouseto}
+										/>
+									);
+								})}
+							</div>
+						);
+					})}
+				</div>
 			</div>
 		);
 	}

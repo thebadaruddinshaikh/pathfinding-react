@@ -48,4 +48,16 @@ export default class Algorithms {
 			}
 		}
 	}
+
+	async depthFirstSearch() {
+		console.log("From dfs");
+	}
+
+	async dijkstras() {
+		console.log("From dijkstras");
+	}
+
+	async aStar() {
+		console.log("From A*");
+	}
 }
