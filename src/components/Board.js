@@ -254,7 +254,8 @@ export default class Board extends React.PureComponent {
 						🏁 : Start <t /> 🎯 : End <br />{" "}
 						<span>
 							{" "}
-							You can drag on the grid to draw walls, Select any algorithm to visualize
+							You can drag on the grid to draw walls , and drag 🏁 & 🎯 to move them on
+							the grid , Select any algorithm to visualize
 						</span>
 					</p>
 					<p style={{ fontWeight: "bold" }}>
