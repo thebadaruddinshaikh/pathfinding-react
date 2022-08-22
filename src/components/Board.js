@@ -47,7 +47,7 @@ export default class Board extends React.PureComponent {
 			isPathFound: false,
 			isUnderProgramControl: false,
 			selectedAlgo: "BFS",
-			selectedSpeed: "Fast",
+			selectedSpeed: "FS",
 			start: [5, 10],
 			end: [35, 10],
 		};
@@ -170,6 +170,13 @@ export default class Board extends React.PureComponent {
 		}
 	};
 
+	clearBoard = () => {
+		this.setState({
+			grid: this.constructor.buildGrid(),
+			isPathFound: false,
+		});
+	};
+
 	markVisited = (x, y) => {
 		let grid = [...this.state.grid];
 		grid[y][x] = {
@@ -186,7 +193,6 @@ export default class Board extends React.PureComponent {
 		speed = this.speedToDelayMap[this.state.selectedSpeed],
 		triggerFromNav = false,
 	}) => {
-		console.log(speed);
 		if (!this.state.isUnderProgramControl) {
 			this.clearPath();
 			this.setState({
@@ -231,6 +237,7 @@ export default class Board extends React.PureComponent {
 					findPath={this.findPath}
 					isUnderProgramControl={this.state.isUnderProgramControl}
 					clearPath={this.clearPath}
+					clearBoard={this.clearBoard}
 					updateAlgo={this.changeAlgo}
 					updateSpeed={this.changeSpeed}
 					selectedAlgo={this.algoToStringMap[this.state.selectedAlgo]}

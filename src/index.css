@@ -3,23 +3,29 @@
 	width: 25px;
 	border: 1px solid gainsboro;
 	background-color: white;
+	overflow: hidden;
 }
 .box:hover {
 	cursor: pointer;
 }
-.source {
-	margin: 0px;
-	padding: 0px;
-	text-align: center;
-	font-weight: 900;
-	font-size: 23px;
-}
+
 .animate-visit {
 	animation: touched 0.6s ease-out forwards;
 	animation-iteration-count: 1;
 	transform-origin: center;
 }
-
+.house {
+	margin: auto;
+	padding: 0px;
+	text-align: center;
+	cursor: pointer;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
 .visit {
 	background-color: cyan;
 	border-color: rgb(10, 207, 207);
@@ -130,6 +136,7 @@ nav h2 {
 	position: absolute;
 	color: white;
 	visibility: hidden;
+	z-index: 1;
 	width: 100%;
 	background-color: rgb(87, 105, 243);
 	padding: 0px;

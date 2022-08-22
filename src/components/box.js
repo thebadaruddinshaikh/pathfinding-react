@@ -51,7 +51,7 @@ class Box extends React.Component {
 		let house;
 
 		if (this.props.isStart || this.props.isEnd) {
-			house = <p>{this.props.isStart ? ">" : "O"}</p>;
+			house = <div className="house">{this.props.isStart ? "🏁" : "🎯"}</div>;
 		}
 
 		return (

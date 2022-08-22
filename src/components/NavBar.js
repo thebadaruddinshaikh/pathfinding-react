@@ -66,7 +66,7 @@ export default class NavBar extends React.PureComponent {
 							}
 						>
 							Speed <br />
-							<sub>{this.props.selectedSpeed} </sub>
+							<sub>{this.props.selectedSpeed}</sub>
 						</button>
 						<ul
 							className="dropdown-options"
@@ -102,7 +102,7 @@ export default class NavBar extends React.PureComponent {
 					</div>
 
 					<div className="navOption">
-						<button>Clear Board</button>
+						<button onClick={this.props.clearBoard}>Clear Board</button>
 					</div>
 				</div>
 			</nav>
