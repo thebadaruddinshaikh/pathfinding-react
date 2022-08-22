@@ -54,8 +54,8 @@ export default class NavBar extends React.PureComponent {
 						>
 							<li onClick={() => this.updateAlgo("BFS")}>BFS</li>
 							<li onClick={() => this.updateAlgo("DFS")}>DFS</li>
-							<li onClick={() => this.updateAlgo("DIK")}>Dijkstra's</li>
-							<li onClick={() => this.updateAlgo("AST")}>A*</li>
+							{/* <li onClick={() => this.updateAlgo("DIK")}>Dijkstra's</li>
+							<li onClick={() => this.updateAlgo("AST")}>A*</li> */}
 						</ul>
 					</div>
 

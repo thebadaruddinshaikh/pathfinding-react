@@ -1,8 +1,8 @@
 import React from "react";
-import { GRID } from "../constants";
+import { GRID } from "../constants/constants";
 import Algorithms from "../algorithms";
 
-import Box from "./box";
+import Box from "./Box";
 import NavBar from "./NavBar";
 
 export default class Board extends React.PureComponent {
@@ -21,6 +21,11 @@ export default class Board extends React.PureComponent {
 	};
 
 	algoToMethodMap = null;
+
+	algoToMessageMap = {
+		BFS: "Breadth First Search guarantees a shortest path",
+		DFS: "Depth First Search does not guarantee the shortest path",
+	};
 
 	algoToStringMap = {
 		BFS: "BFS",
@@ -48,8 +53,8 @@ export default class Board extends React.PureComponent {
 			isUnderProgramControl: false,
 			selectedAlgo: "BFS",
 			selectedSpeed: "FS",
-			start: [5, 10],
-			end: [35, 10],
+			start: [5, 12],
+			end: [45, 12],
 		};
 	}
 
@@ -200,8 +205,8 @@ export default class Board extends React.PureComponent {
 				isPathFound: !triggerFromNav,
 			});
 
-			const queue = [start];
-			await this.algoToMethodMap[this.state.selectedAlgo](queue, speed, end);
+			const nodeArr = [start];
+			await this.algoToMethodMap[this.state.selectedAlgo](nodeArr, speed, end);
 			this.setState({
 				isUnderProgramControl: false,
 			});
@@ -243,6 +248,19 @@ export default class Board extends React.PureComponent {
 					selectedAlgo={this.algoToStringMap[this.state.selectedAlgo]}
 					selectedSpeed={this.speedToStringMap[this.state.selectedSpeed]}
 				/>
+				<div className="info-block">
+					<p>
+						{" "}
+						🏁 : Start <t /> 🎯 : End <br />{" "}
+						<span>
+							{" "}
+							You can drag on the grid to draw walls, Select any algorithm to visualize
+						</span>
+					</p>
+					<p style={{ fontWeight: "bold" }}>
+						{this.algoToMessageMap[this.state.selectedAlgo]}
+					</p>
+				</div>
 				<div
 					className="center-container grid-container"
 					onMouseDown={this.enableDragging}
@@ -275,6 +293,12 @@ export default class Board extends React.PureComponent {
 							</div>
 						);
 					})}
+				</div>
+				<div className="info-block">
+					{" "}
+					<a href={"https://www.google.com"} target={"_blank"} rel="noreferrer">
+						Source Code
+					</a>
 				</div>
 			</div>
 		);
