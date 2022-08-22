@@ -161,7 +161,6 @@ export default class Board extends React.PureComponent {
 				for (let x = 0; x < GRID.NUM_COLS; x++) {
 					if (grid[y][x].isVisited || grid[y][x].isPath) {
 						grid[y][x] = {
-							// ...box,
 							isVisited: false,
 							isPath: false,
 						};
@@ -176,10 +175,12 @@ export default class Board extends React.PureComponent {
 	};
 
 	clearBoard = () => {
-		this.setState({
-			grid: this.constructor.buildGrid(),
-			isPathFound: false,
-		});
+		if (!this.state.isUnderProgramControl) {
+			this.setState({
+				grid: this.constructor.buildGrid(),
+				isPathFound: false,
+			});
+		}
 	};
 
 	markVisited = (x, y) => {
