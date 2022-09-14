@@ -36,6 +36,11 @@ export default class Board extends React.PureComponent {
 
 	constructor(props) {
 		super(props);
+
+		GRID.setDimension(window.innerHeight, window.innerWidth);
+		this.sourceCoords = [3, Math.floor(GRID.NUM_ROWS / 2)];
+		this.destCoords = [GRID.NUM_COLS - 3, Math.floor(GRID.NUM_ROWS / 2)];
+
 		this.algorithms = new Algorithms();
 		this.algoToMethodMap = {
 			BFS: this.algorithms.breadthFirstSearch.bind(this),
@@ -53,8 +58,8 @@ export default class Board extends React.PureComponent {
 			isUnderProgramControl: false,
 			selectedAlgo: "BFS",
 			selectedSpeed: "FS",
-			start: [5, 12],
-			end: [45, 12],
+			start: this.sourceCoords,
+			end: this.destCoords,
 		};
 	}
 
@@ -252,7 +257,7 @@ export default class Board extends React.PureComponent {
 				<div className="info-block">
 					<p>
 						{" "}
-						🏁 : Start <t /> 🎯 : End <br />{" "}
+						🏁 : Start 🎯 : End <br />{" "}
 						<span>
 							{" "}
 							You can drag on the grid to draw walls , and drag 🏁 & 🎯 to move them on

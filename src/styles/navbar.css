@@ -3,6 +3,7 @@ nav {
 	background-color: rgb(87, 105, 243);
 	color: white;
 	display: flex;
+	flex-wrap: wrap;
 	margin: 0px;
 	padding: 0px;
 }
@@ -14,6 +15,7 @@ nav h2 {
 
 .navControls {
 	display: flex;
+	flex-wrap: wrap;
 	justify-content: space-evenly;
 	flex-grow: 1;
 }
