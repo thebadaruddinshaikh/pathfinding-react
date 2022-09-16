@@ -6,6 +6,11 @@ import Box from "./Box";
 import NavBar from "./NavBar";
 
 export default class Board extends React.PureComponent {
+	algoToMethodMap = null;
+	sourceCoords = null;
+	destCoords = null;
+	algorithms = null;
+
 	speedToDelayMap = {
 		IN: 0,
 		FS: 25,
@@ -19,8 +24,6 @@ export default class Board extends React.PureComponent {
 		MD: "Medium",
 		SL: "Slow",
 	};
-
-	algoToMethodMap = null;
 
 	algoToMessageMap = {
 		BFS: "Breadth First Search guarantees a shortest path",
@@ -282,7 +285,9 @@ export default class Board extends React.PureComponent {
 											isWall={box.isWall}
 											isVisited={box.isVisited}
 											isPath={box.isPath}
-											isPathFound={this.state.isPathFound}
+											shouldAnimate={
+												!this.state.isPathFound && this.state.selectedSpeed !== "IN"
+											}
 											isStart={
 												this.state.start[0] === index && this.state.start[1] === rowNum
 											}

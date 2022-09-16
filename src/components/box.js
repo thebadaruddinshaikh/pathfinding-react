@@ -16,9 +16,9 @@ class Box extends React.Component {
 		if (this.props.isWall) {
 			classList += " wall ";
 		} else if (this.props.isPath) {
-			classList += this.props.isPathFound ? " path " : " animate-path ";
+			classList += this.props.shouldAnimate ? " animate-path " : " path ";
 		} else if (this.props.isVisited) {
-			classList += this.props.isPathFound ? " visit " : " animate-visit ";
+			classList += this.props.shouldAnimate ? " animate-visit " : " visit ";
 		}
 
 		return classList.trim();
