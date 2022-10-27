@@ -1,69 +1,68 @@
 import React from "react";
 
-class Box extends React.Component {
-	shouldComponentUpdate(nextProps) {
-		return (
-			this.props.isWall !== nextProps.isWall ||
-			this.props.isVisited !== nextProps.isVisited ||
-			this.props.isStart !== nextProps.isStart ||
-			this.props.isEnd !== nextProps.isEnd ||
-			this.props.isPath !== nextProps.isPath
-		);
-	}
+function Box(props) {
+	let house;
 
-	getClass() {
+	function getClass() {
 		let classList = "box";
-		if (this.props.isWall) {
+		if (props.isWall) {
 			classList += " wall ";
-		} else if (this.props.isPath) {
-			classList += this.props.shouldAnimate ? " animate-path " : " path ";
-		} else if (this.props.isVisited) {
-			classList += this.props.shouldAnimate ? " animate-visit " : " visit ";
+		} else if (props.isPath) {
+			classList += props.shouldAnimate ? " animate-path " : " path ";
+		} else if (props.isVisited) {
+			classList += props.shouldAnimate ? " animate-visit " : " visit ";
 		}
 
 		return classList.trim();
 	}
 
-	mouseDownHandler = () => {
-		if (this.props.isStart || this.props.isEnd) {
-			this.props.setHouseOnMove(true, this.props.isStart);
+	function mouseDownHandler() {
+		if (props.isStart || props.isEnd) {
+			props.setHouseOnMove(true, props.isStart);
 		}
-		this.interactionHandler();
-	};
+		interactionHandler();
+	}
 
-	mouseEnterHandler = () => {
-		if (this.props.isDragging) {
-			this.interactionHandler();
+	function mouseEnterHandler() {
+		if (props.isDragging) {
+			interactionHandler();
 		}
-	};
+	}
 
-	interactionHandler() {
-		if (this.props.isHouseMoving) {
-			if (!this.props.isWall) {
-				this.props.moveHouseto(this.props.coord);
+	function interactionHandler() {
+		if (props.isHouseMoving) {
+			if (!props.isWall) {
+				props.moveHouseto(props.coord);
 			}
-		} else if (!this.props.isStart && !this.props.isEnd) {
-			this.props.onClick(this.props.coord[0], this.props.coord[1]);
+		} else if (!props.isStart && !props.isEnd) {
+			props.onClick(props.coord[0], props.coord[1]);
 		}
 	}
 
-	render() {
-		let house;
-
-		if (this.props.isStart || this.props.isEnd) {
-			house = <div className="house">{this.props.isStart ? "🏁" : "🎯"}</div>;
-		}
-
-		return (
-			<div
-				className={this.getClass()}
-				onMouseEnter={this.mouseEnterHandler}
-				onMouseDown={this.mouseDownHandler}
-			>
-				{house}
-			</div>
-		);
+	if (props.isStart || props.isEnd) {
+		house = <div className="house">{props.isStart ? "🏁" : "🎯"}</div>;
 	}
+
+	return (
+		<div
+			className={getClass()}
+			onMouseEnter={mouseEnterHandler}
+			onMouseDown={mouseDownHandler}
+		>
+			{house}
+		</div>
+	);
 }
 
-export default Box;
+function areEqual(props, nextProps) {
+	return (
+		props.isWall === nextProps.isWall &&
+		props.isVisited === nextProps.isVisited &&
+		props.isStart === nextProps.isStart &&
+		props.isEnd === nextProps.isEnd &&
+		props.isPath === nextProps.isPath &&
+		props.isDragging === nextProps.isDragging
+	);
+}
+
+export default React.memo(Box, areEqual);
