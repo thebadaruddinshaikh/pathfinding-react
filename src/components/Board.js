@@ -2,7 +2,7 @@ import React from "react";
 import { GRID } from "../constants/constants";
 import Algorithms from "../algorithms";
 
-import Box from "./Box";
+import Box from './box'
 import NavBar from "./NavBar";
 
 export default class Board extends React.PureComponent {
