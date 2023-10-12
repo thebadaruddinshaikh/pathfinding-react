@@ -2,6 +2,12 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app), currently deployed using GH pages at : https://thebadaruddinshaikh.github.io/pathfinding-react/
 
+## Algorithms to be implemented.
+1. Dijkstra's Algorithm (Uniform Cost search)
+2. A* Algorithim
+3. Best First Search.
+4. Iterative Deepening
+5. Bi-Directional Search.
 ## Available Scripts
 
 In the project directory, you can run:
