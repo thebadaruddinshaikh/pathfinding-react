@@ -2,7 +2,7 @@ import React from "react";
 import { GRID } from "../constants/constants";
 import Algorithms from "../algorithms";
 
-import Box from './box'
+import Box from './Box.js'
 import NavBar from "./NavBar";
 
 export default class Board extends React.PureComponent {
@@ -273,8 +273,6 @@ export default class Board extends React.PureComponent {
 				</div>
 				<div
 					className="center-container grid-container"
-					onMouseDown={this.enableDragging}
-					onMouseUp={this.disableDragging}
 				>
 					{this.state.grid.map((rows, rowNum) => {
 						return (
@@ -283,6 +281,8 @@ export default class Board extends React.PureComponent {
 									return (
 										<Box
 											isWall={box.isWall}
+											mouseDownHandler={this.enableDragging}
+											mouseUpHandler={this.disableDragging}
 											isVisited={box.isVisited}
 											isPath={box.isPath}
 											shouldAnimate={
@@ -293,7 +293,7 @@ export default class Board extends React.PureComponent {
 											}
 											isEnd={this.state.end[0] === index && this.state.end[1] === rowNum}
 											key={rowNum * 30 + index}
-											coord={[index, rowNum]}
+											coord={[index, rowNum]}											
 											isDragging={this.state.isDragging}
 											isHouseMoving={this.state.isHouseMoving}
 											onClick={this.makeWall}
@@ -305,16 +305,6 @@ export default class Board extends React.PureComponent {
 							</div>
 						);
 					})}
-				</div>
-				<div className="info-block">
-					{" "}
-					<a
-						href={"https://github.com/thebadaruddinshaikh/pathfinding-react"}
-						target={"_blank"}
-						rel="noreferrer"
-					>
-						Source Code
-					</a>
 				</div>
 			</div>
 		);
