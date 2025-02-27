@@ -1,111 +1,104 @@
-import React from "react";
+import React, { useState } from "react";
 
-export default class NavBar extends React.PureComponent {
-	constructor(props) {
-		super(props);
-		this.state = {
-			isAlgoDropDownVisible: false,
-			isSpeedDropDownVisible: false,
-		};
-	}
+export default function NavBar(props) {
+	const [state, setState] = useState({
+		isAlgoDropDownVisible: false,
+		isSpeedDropDownVisible: false,
+	});
 
-	toggleDropDownVisiblity({
+	function toggleDropDownVisiblity({
 		algoOptionClicked = false,
 		speedOptionClicked = false,
 	}) {
-		this.setState((state, props) => ({
+		setState({
 			isAlgoDropDownVisible: algoOptionClicked
 				? !state.isAlgoDropDownVisible
 				: false,
 			isSpeedDropDownVisible: speedOptionClicked
 				? !state.isSpeedDropDownVisible
 				: false,
-		}));
+		});
 	}
 
-	updateAlgo(algo) {
-		this.toggleDropDownVisiblity({});
-		this.props.updateAlgo(algo);
+	function updateAlgo(algo) {
+		toggleDropDownVisiblity({});
+		props.updateAlgo(algo);
 	}
 
-	updateSpeed(speed) {
-		this.toggleDropDownVisiblity({});
-		this.props.updateSpeed(speed);
+	function updateSpeed(speed) {
+		toggleDropDownVisiblity({});
+		props.updateSpeed(speed);
 	}
 
-	render() {
-		return (
-			<nav>
-				<h2>Pathfinding</h2>
-				<div className="navControls">
-					<div className="navOption">
-						<button
-							onClick={() => this.toggleDropDownVisiblity({ algoOptionClicked: true })}
-						>
-							Algorithms <br />
-							<sub>{this.props.selectedAlgo}</sub>
-						</button>
-						<ul
-							className="dropdown-options"
-							id="algo-dropdown"
-							style={{
-								visibility: this.state.isAlgoDropDownVisible ? "visible" : "hidden",
-							}}
-						>
-							<li onClick={() => this.updateAlgo("BFS")}>BFS</li>
-							<li onClick={() => this.updateAlgo("DFS")}>DFS</li>
-							{/* <li onClick={() => this.updateAlgo("DIK")}>Dijkstra's</li>
-							<li onClick={() => this.updateAlgo("AST")}>A*</li> */}
-						</ul>
-					</div>
-
-					<div className="navOption">
-						<button
-							onClick={() =>
-								this.toggleDropDownVisiblity({ speedOptionClicked: true })
-							}
-						>
-							Speed <br />
-							<sub>{this.props.selectedSpeed}</sub>
-						</button>
-						<ul
-							className="dropdown-options"
-							id="speed-dropdown"
-							style={{
-								visibility: this.state.isSpeedDropDownVisible ? "visible" : "hidden",
-							}}
-						>
-							<li onClick={() => this.updateSpeed("IN")}>Insane ⚡️</li>
-							<li onClick={() => this.updateSpeed("FS")}>Fast</li>
-							<li onClick={() => this.updateSpeed("MD")}>Medium</li>
-							<li onClick={() => this.updateSpeed("SL")}>Slow</li>
-						</ul>
-					</div>
-
-					<div className="navOption">
-						<button
-							onClick={() => this.props.findPath({ triggerFromNav: true })}
-							disabled={this.props.isUnderProgramControl}
-						>
-							Find Path
-						</button>
-					</div>
-
-					<div className="navOption">
-						<button
-							onClick={() => {
-								this.props.clearPath(true);
-							}}
-						>
-							Clear Path
-						</button>
-					</div>
-
-					<div className="navOption">
-						<button onClick={this.props.clearBoard}>Clear Board</button>
-					</div>
+	return (
+		<nav>
+			<h2>Pathfinding</h2>
+			<div className="navControls">
+				<div className="navOption">
+					<button
+						onClick={() => toggleDropDownVisiblity({ algoOptionClicked: true })}
+					>
+						Algorithms <br />
+						<sub>{props.selectedAlgo}</sub>
+					</button>
+					<ul
+						className="dropdown-options"
+						id="algo-dropdown"
+						style={{
+							visibility: state.isAlgoDropDownVisible ? "visible" : "hidden",
+						}}
+					>
+						<li onClick={() => updateAlgo("BFS")}>BFS</li>
+						<li onClick={() => updateAlgo("DFS")}>DFS</li>
+						{/* <li onClick={() => updateAlgo("DIK")}>Dijkstra's</li>
+							<li onClick={() => updateAlgo("AST")}>A*</li> */}
+					</ul>
 				</div>
-			</nav>
-		);
-	}
+
+				<div className="navOption">
+					<button
+						onClick={() => toggleDropDownVisiblity({ speedOptionClicked: true })}
+					>
+						Speed <br />
+						<sub>{props.selectedSpeed}</sub>
+					</button>
+					<ul
+						className="dropdown-options"
+						id="speed-dropdown"
+						style={{
+							visibility: state.isSpeedDropDownVisible ? "visible" : "hidden",
+						}}
+					>
+						<li onClick={() => updateSpeed("IN")}>Insane ⚡️</li>
+						<li onClick={() => updateSpeed("FS")}>Fast</li>
+						<li onClick={() => updateSpeed("MD")}>Medium</li>
+						<li onClick={() => updateSpeed("SL")}>Slow</li>
+					</ul>
+				</div>
+
+				<div className="navOption">
+					<button
+						onClick={() => props.findPath({ triggerFromNav: true })}
+						disabled={props.isUnderProgramControl}
+					>
+						Find Path
+					</button>
+				</div>
+
+				<div className="navOption">
+					<button
+						onClick={() => {
+							props.clearPath(true);
+						}}
+					>
+						Clear Path
+					</button>
+				</div>
+
+				<div className="navOption">
+					<button onClick={props.clearBoard}>Clear Board</button>
+				</div>
+			</div>
+		</nav>
+	);
 }
