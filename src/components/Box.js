@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function Box(props){
+export default React.memo(function Box(props){
 
 	function getClass() {
 		let classList = "box";
@@ -55,4 +55,11 @@ export default function Box(props){
 				{house}
 			</div>
 		);
-}		
+}, (prevProps, props) => {
+	return prevProps.isWall === props.isWall &&
+	prevProps.isVisited === props.isVisited &&
+	prevProps.isStart === props.isStart &&
+	prevProps.isEnd === props.isEnd &&
+	prevProps.isPath === props.isPath &&
+	prevProps.isDragging === props.isDragging
+})		
